@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import styles from '../styles/modern.module.css';
 
 interface Recommendation {
     name: string;
@@ -17,9 +18,9 @@ const Recommendations: React.FC = () => {
         <div>
             <h2>Recommended Tourist Spots</h2>
             {recommendations.length > 0 ? (
-                <ul>
+                <ul className={styles['results-section']}>
                     {recommendations.map((spot: Recommendation, index) => (
-                        <li key={index}>
+                        <li key={index} className={styles['result-card']}>
                             <h3>{spot.name}</h3>
                             <p>{spot.description}</p>
                             <p>Estimated Cost: {spot.cost} (Budget: {budget})</p>
