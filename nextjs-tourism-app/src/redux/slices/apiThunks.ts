@@ -65,7 +65,14 @@ export const fetchRecommendations = createAsyncThunk(
         ]
       }
     ];
-    const res = await fetch('/api/gemma', {
+    // Use backend base URL from env or default to http://localhost:8000
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+    const provider = localStorage.getItem('llm_provider') || 'gemini';
+    let apiUrl = `${backendUrl}/api/gemini`;
+    if (provider === 'ollama') apiUrl = `${backendUrl}/api/ollama`;
+    // If you want to disable API calls, uncomment the next line:
+    // return null;
+    const res = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: prompt }),

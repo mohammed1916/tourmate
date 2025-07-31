@@ -17,42 +17,45 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/api/gemma")
-async def gemma_infer(request: Request):
+# Gemini API endpoint
+@app.post("/api/gemini")
+async def gemini_infer(request: Request):
     data = await request.json()
     messages = data.get("messages", [])
-    provider = data.get("provider", "ollama")  # default to ollama
     prompt = "\n".join(
         c["text"] for m in messages for c in m.get("content", []) if c["type"] == "text"
     )
-    if provider == "gemini":
-        # Use Gemini API
-        payload = {
-            "contents": [{"parts": [{"text": prompt}]}]
-        }
-        headers = {"Content-Type": "application/json"}
-        url = f"{GEMINI_API_URL}?key={GEMINI_API_KEY}"
-        resp = requests.post(url, json=payload, headers=headers)
-        try:
-            result = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
-        except Exception:
-            result = resp.text
-        return {"result": result}
-    elif provider == "ollama":
-        # Use Ollama local LLM
-        payload = {
-            "model": OLLAMA_MODEL,
-            "prompt": prompt,
-            "stream": False
-        }
-        try:
-            resp = requests.post(OLLAMA_URL, json=payload)
-            resp.raise_for_status()
-            return {"result": resp.json()["response"]}
-        except Exception as e:
-            return {"result": f"Ollama error: {str(e)}"}
-    else:
-        return {"result": "Invalid provider. Use 'gemini' or 'ollama'."}
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}]
+    }
+    headers = {"Content-Type": "application/json"}
+    url = f"{GEMINI_API_URL}?key={GEMINI_API_KEY}"
+    resp = requests.post(url, json=payload, headers=headers)
+    try:
+        result = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+    except Exception:
+        result = resp.text
+    return {"result": result}
+
+# Ollama API endpoint
+@app.post("/api/ollama")
+async def ollama_infer(request: Request):
+    data = await request.json()
+    messages = data.get("messages", [])
+    prompt = "\n".join(
+        c["text"] for m in messages for c in m.get("content", []) if c["type"] == "text"
+    )
+    payload = {
+        "model": OLLAMA_MODEL,
+        "prompt": prompt,
+        "stream": False
+    }
+    try:
+        resp = requests.post(OLLAMA_URL, json=payload)
+        resp.raise_for_status()
+        return {"result": resp.json()["response"]}
+    except Exception as e:
+        return {"result": f"Ollama error: {str(e)}"}
 
 # --- External API Endpoints ---
 
