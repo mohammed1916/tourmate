@@ -2,24 +2,12 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import os
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 import requests
 
-GEMMA_PATH = os.environ.get("GEMMA_PATH", "google/gemma-3n-e2b-it")
 GEMINI_API_URL = os.environ.get("GEMINI_API_URL", "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434/api/generate")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma3n-e4b-q4")
-
-# Local Gemma model
-try:
-    tokenizer = AutoTokenizer.from_pretrained(GEMMA_PATH, trust_remote_code=True)
-    model = AutoModelForCausalLM.from_pretrained(GEMMA_PATH, trust_remote_code=True)
-except Exception as e:
-    tokenizer = None
-    model = None
-    print(f"Warning: Could not load local Gemma model: {e}")
 
 app = FastAPI()
 app.add_middleware(
@@ -33,7 +21,7 @@ app.add_middleware(
 async def gemma_infer(request: Request):
     data = await request.json()
     messages = data.get("messages", [])
-    provider = data.get("provider", "local")  # 'local', 'gemini', or 'ollama'
+    provider = data.get("provider", "ollama")  # default to ollama
     prompt = "\n".join(
         c["text"] for m in messages for c in m.get("content", []) if c["type"] == "text"
     )
@@ -64,14 +52,7 @@ async def gemma_infer(request: Request):
         except Exception as e:
             return {"result": f"Ollama error: {str(e)}"}
     else:
-        # Use local Gemma
-        if not tokenizer or not model:
-            return {"result": "Local Gemma model not available."}
-        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-        generation_config = GenerationConfig(max_new_tokens=150, do_sample=True, temperature=0.7)
-        outputs = model.generate(**inputs, generation_config=generation_config)
-        result = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return {"result": result}
+        return {"result": "Invalid provider. Use 'gemini' or 'ollama'."}
 
 # --- External API Endpoints ---
 

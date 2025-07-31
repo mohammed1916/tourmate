@@ -3,9 +3,9 @@ export interface GemmaMessage {
   content: { type: "text" | "image"; text?: string; url?: string }[];
 }
 
-export type GemmaProvider = "local" | "gemini" | "ollama";
+export type GemmaProvider = "gemini" | "ollama";
 
-export async function fetchGemmaResult(messages: GemmaMessage[], provider: GemmaProvider = "local") {
+export async function fetchGemmaResult(messages: GemmaMessage[], provider: GemmaProvider = "ollama") {
   const res = await fetch("http://localhost:8000/api/gemma", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
