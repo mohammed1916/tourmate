@@ -38,6 +38,7 @@ const SearchForm: React.FC = () => {
                     onChange={setSource}
                     placeholder="Enter source location"
                     id="source"
+                    zIndex={11000}
                   />
                 ) : (
                   <input
@@ -57,6 +58,7 @@ const SearchForm: React.FC = () => {
                     onChange={setDestination}
                     placeholder="Enter destination"
                     id="destination"
+                    zIndex={10000}
                   />
                 ) : (
                   <input

@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from 'react';
+import styles from '../styles/acrylicForm.module.css';
 
 interface PlaceAutocompleteInputProps {
   value: string;
   onChange: (val: string) => void;
   placeholder: string;
   id: string;
+  zIndex?: number;
 }
 
-const PlaceAutocompleteInput: React.FC<PlaceAutocompleteInputProps> = ({ value, onChange, placeholder, id }) => {
+const PlaceAutocompleteInput: React.FC<PlaceAutocompleteInputProps> = ({ value, onChange, placeholder, id, zIndex }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pacRef = useRef<any>(null);
 
@@ -39,19 +41,16 @@ const PlaceAutocompleteInput: React.FC<PlaceAutocompleteInputProps> = ({ value, 
       onChange(place?.structured_formatting?.main_text || place?.description || '');
     });
 
+    // Clean up
     return () => {
-      containerRef.current && (containerRef.current.innerHTML = '');
+      pac.remove();
     };
-  }, [placeholder, id]);
+  }, [value, placeholder, id, onChange]);
 
-  useEffect(() => {
-    if (pacRef.current && value !== pacRef.current.value) {
-      // @ts-ignore: value is supported at runtime
-      pacRef.current.value = value || '';
-    }
-  }, [value]);
-
-  return <div ref={containerRef} />;
+  let zClass = styles.autocompleteContainer;
+  if (zIndex === 11000) zClass += ' ' + styles.autocompleteSource;
+  if (zIndex === 10000) zClass += ' ' + styles.autocompleteDestination;
+  return <div ref={containerRef} className={zClass} />;
 };
 
 export default PlaceAutocompleteInput;

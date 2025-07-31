@@ -1,6 +1,6 @@
 .acrylicForm {
-  position: relative;
-  overflow: hidden;
+  position: static;
+  overflow: visible;
   background: rgba(36, 40, 54, 0.75);
   border-radius: 18px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
@@ -37,8 +37,8 @@
 }
 
 .acrylicForm > * {
-  position: relative;
-  z-index: 1;
+  position: static;
+  z-index: auto;
 }
 
 .acrylicForm label {
@@ -96,6 +96,18 @@
 .providerSelect {
   margin-top: 0.2rem;
   min-width: 180px;
+}
+
+.autocompleteContainer {
+  position: relative;
+}
+
+.autocompleteSource {
+  z-index: 11000 !important;
+}
+
+.autocompleteDestination {
+  z-index: 10000 !important;
 }
 
 @media (max-width: 600px) {
