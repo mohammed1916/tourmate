@@ -97,3 +97,25 @@
   margin-top: 0.2rem;
   min-width: 180px;
 }
+
+@media (max-width: 600px) {
+  .acrylicForm {
+    padding: 1.2rem 0.7rem 1rem 0.7rem;
+    max-width: 98vw;
+    font-size: 0.97rem;
+  }
+  .acrylicForm label,
+  .providerLabel {
+    font-size: 0.97rem;
+  }
+  .acrylicForm input,
+  .acrylicForm select,
+  .providerSelect {
+    font-size: 0.97rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .acrylicForm button {
+    font-size: 1rem;
+    padding: 0.6rem 0;
+  }
+}
