@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { setSearchParams } from '../redux/slices/searchSlice';
 import PlaceAutocompleteInput from './PlaceAutocompleteInput';
 import { useJsApiLoader } from '@react-google-maps/api';
+import styles from '../styles/acrylicForm.module.css';
 
 const PROVIDERS = [
   { value: 'gemini', label: 'Google Gemini API' },
@@ -28,7 +29,7 @@ const SearchForm: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={styles.acrylicForm}>
             <div>
                 <label htmlFor="source">Source:</label>
                 {isLoaded ? (
@@ -67,12 +68,13 @@ const SearchForm: React.FC = () => {
                   />
                 )}
             </div>
-            <div>
-                <label htmlFor="provider">LLM Provider:</label>
+            <div className={styles.providerSection}>
+                <label htmlFor="provider" className={styles.providerLabel}>LLM Provider:</label>
                 <select
                     id="provider"
                     value={provider}
                     onChange={e => setProvider(e.target.value)}
+                    className={styles.providerSelect}
                 >
                     {PROVIDERS.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
