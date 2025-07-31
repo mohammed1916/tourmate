@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import os
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
@@ -71,3 +72,93 @@ async def gemma_infer(request: Request):
         outputs = model.generate(**inputs, generation_config=generation_config)
         result = tokenizer.decode(outputs[0], skip_special_tokens=True)
         return {"result": result}
+
+# --- External API Endpoints ---
+
+@app.get("/api/hotels")
+async def get_hotels(location: str, checkin: str, checkout: str, guests: int = 1):
+    # Example: Booking.com API via RapidAPI
+    api_key = os.environ.get("BOOKING_API_KEY", "")
+    url = "https://booking-com.p.rapidapi.com/v1/hotels/search"
+    headers = {
+        "X-RapidAPI-Key": api_key,
+        "X-RapidAPI-Host": "booking-com.p.rapidapi.com"
+    }
+    params = {
+        "dest_id": location,
+        "dest_type": "city",
+        "checkin_date": checkin,
+        "checkout_date": checkout,
+        "adults_number": guests,
+        "order_by": "popularity"
+    }
+    try:
+        resp = requests.get(url, headers=headers, params=params)
+        return JSONResponse(content=resp.json())
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/api/flights")
+async def get_flights(origin: str, destination: str, date: str):
+    # Example: Skyscanner API via RapidAPI
+    api_key = os.environ.get("SKYSCANNER_API_KEY", "")
+    url = "https://skyscanner44.p.rapidapi.com/search"
+    headers = {
+        "X-RapidAPI-Key": api_key,
+        "X-RapidAPI-Host": "skyscanner44.p.rapidapi.com"
+    }
+    params = {
+        "origin": origin,
+        "destination": destination,
+        "date": date
+    }
+    try:
+        resp = requests.get(url, headers=headers, params=params)
+        return JSONResponse(content=resp.json())
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/api/weather")
+async def get_weather(city: str):
+    api_key = os.environ.get("OPENWEATHERMAP_API_KEY", "")
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    try:
+        resp = requests.get(url)
+        return JSONResponse(content=resp.json())
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/api/currency")
+async def get_currency(base: str = "USD", symbols: str = "INR"):  # e.g. base=USD&symbols=INR,EUR
+    url = f"https://api.exchangerate.host/latest?base={base}&symbols={symbols}"
+    try:
+        resp = requests.get(url)
+        return JSONResponse(content=resp.json())
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/api/events")
+async def get_events(city: str):
+    api_key = os.environ.get("EVENTBRITE_API_KEY", "")
+    url = f"https://www.eventbriteapi.com/v3/events/search/?location.address={city}"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    try:
+        resp = requests.get(url, headers=headers)
+        return JSONResponse(content=resp.json())
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.get("/api/attractions")
+async def get_attractions(location: str):
+    api_key = os.environ.get("TRIPADVISOR_API_KEY", "")
+    url = "https://tripadvisor16.p.rapidapi.com/api/v1/attractions/searchAttractions"
+    headers = {
+        "X-RapidAPI-Key": api_key,
+        "X-RapidAPI-Host": "tripadvisor16.p.rapidapi.com"
+    }
+    params = {"query": location}
+    try:
+        resp = requests.get(url, headers=headers, params=params)
+        return JSONResponse(content=resp.json())
+    except Exception as e:
+        return {"error": str(e)}

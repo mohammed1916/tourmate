@@ -3,11 +3,13 @@ export interface GemmaMessage {
   content: { type: "text" | "image"; text?: string; url?: string }[];
 }
 
-export async function fetchGemmaResult(messages: GemmaMessage[]) {
+export type GemmaProvider = "local" | "gemini" | "ollama";
+
+export async function fetchGemmaResult(messages: GemmaMessage[], provider: GemmaProvider = "local") {
   const res = await fetch("http://localhost:8000/api/gemma", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, provider }),
   });
   const data = await res.json();
   return data.result as string;

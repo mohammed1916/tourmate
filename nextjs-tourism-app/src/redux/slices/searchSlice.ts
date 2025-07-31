@@ -14,6 +14,9 @@ interface SearchState {
     budget: number;
     touristSpots: any[];
     recommendations: any[];
+    weather?: any;
+    currency?: any;
+    events?: any[];
 }
 
 const initialState: SearchState = {
@@ -23,6 +26,9 @@ const initialState: SearchState = {
     budget: 0,
     touristSpots: [],
     recommendations: [],
+    weather: undefined,
+    currency: undefined,
+    events: undefined,
 };
 
 const searchSlice = createSlice({
@@ -47,6 +53,15 @@ const searchSlice = createSlice({
         setRecommendations(state, action: PayloadAction<any[]>) {
             state.recommendations = action.payload;
         },
+        setWeather(state, action: PayloadAction<any>) {
+            state.weather = action.payload;
+        },
+        setCurrency(state, action: PayloadAction<any>) {
+            state.currency = action.payload;
+        },
+        setEvents(state, action: PayloadAction<any[]>) {
+            state.events = action.payload;
+        },
         setSearchParams(state, action: PayloadAction<{ source: string; destination: string }>) {
             state.source = action.payload.source;
             state.destination = action.payload.destination;
@@ -69,6 +84,9 @@ export const {
     setBudget,
     setTouristSpots,
     setRecommendations,
+    setWeather,
+    setCurrency,
+    setEvents,
     setSearchParams,
     clearSearch,
 } = searchSlice.actions;
