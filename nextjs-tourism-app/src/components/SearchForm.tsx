@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { setSearchParams } from '../redux/slices/searchSlice';
-// @ts-ignore
 import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
 
 const PROVIDERS = [
@@ -9,7 +8,7 @@ const PROVIDERS = [
   { value: 'ollama', label: 'Ollama' },
 ];
 
-const libraries = ['places'];
+const libraries: Array<'places' | 'geometry' | 'drawing' | 'visualization'> = ['places'];
 
 const SearchForm: React.FC = () => {
     const dispatch = useDispatch();
@@ -20,7 +19,7 @@ const SearchForm: React.FC = () => {
     const destRef = useRef<google.maps.places.Autocomplete | null>(null);
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-        libraries
+        libraries: libraries
     });
 
     const handleSourceLoad = (autocomplete: google.maps.places.Autocomplete) => {
