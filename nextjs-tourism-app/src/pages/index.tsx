@@ -8,6 +8,7 @@ import HotelResults from '../components/HotelResults';
 import FlightResults from '../components/FlightResults';
 import ActivityResults from '../components/ActivityResults';
 import UtilityInfo from '../components/UtilityInfo';
+import Footer from '../components/Footer';
 import { RootState } from '../redux/store';
 import { fetchRecommendations } from '../redux/slices/apiThunks';
 import styles from '../styles/modern.module.css';
@@ -42,9 +43,8 @@ const HomePage = () => {
             <div className={styles['utility-section']}>
                 <UtilityInfo weather={weather} currency={currency} events={events} />
             </div>
-            <div className={styles['recommendations-section']}>
-                <Recommendations />
-            </div>
+            <Recommendations />
+            <Footer />
         </div>
     );
 };
