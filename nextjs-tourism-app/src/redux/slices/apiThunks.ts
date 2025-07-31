@@ -2,41 +2,47 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { setResults, setRecommendations, setTouristSpots, setWeather, setCurrency, setEvents } from './searchSlice';
 import { AppDispatch, RootState } from '../store';
 
-export const fetchHotels = createAsyncThunk(
-  'api/fetchHotels',
-  async (
-    { location, checkin, checkout, guests }: { location: string; checkin: string; checkout: string; guests: number },
-    { dispatch }
-  ) => {
-    const res = await fetch(`/api/hotels?location=${location}&checkin=${checkin}&checkout=${checkout}&guests=${guests}`);
-    const data = await res.json();
-    dispatch(setResults({ hotels: data.result || data.hotels || data, buses: [], trains: [], flights: [] }));
-    return data;
-  }
-);
+// export const fetchHotels = createAsyncThunk(
+//   'api/fetchHotels',
+//   async (
+//     { location, checkin, checkout, guests }: { location: string; checkin: string; checkout: string; guests: number },
+//     { dispatch }
+//   ) => {
+//     // Disabled: No API key
+//     // const res = await fetch(`/api/hotels?location=${location}&checkin=${checkin}&checkout=${checkout}&guests=${guests}`);
+//     // const data = await res.json();
+//     // dispatch(setResults({ hotels: data.result || data.hotels || data, buses: [], trains: [], flights: [] }));
+//     // return data;
+//     return null;
+//   }
+// );
 
-export const fetchFlights = createAsyncThunk(
-  'api/fetchFlights',
-  async (
-    { origin, destination, date }: { origin: string; destination: string; date: string },
-    { dispatch }
-  ) => {
-    const res = await fetch(`/api/flights?origin=${origin}&destination=${destination}&date=${date}`);
-    const data = await res.json();
-    dispatch(setResults({ flights: data.result || data.flights || data, buses: [], trains: [], hotels: [] }));
-    return data;
-  }
-);
+// export const fetchFlights = createAsyncThunk(
+//   'api/fetchFlights',
+//   async (
+//     { origin, destination, date }: { origin: string; destination: string; date: string },
+//     { dispatch }
+//   ) => {
+//     // Disabled: No API key
+//     // const res = await fetch(`/api/flights?origin=${origin}&destination=${destination}&date=${date}`);
+//     // const data = await res.json();
+//     // dispatch(setResults({ flights: data.result || data.flights || data, buses: [], trains: [], hotels: [] }));
+//     // return data;
+//     return null;
+//   }
+// );
 
-export const fetchActivities = createAsyncThunk(
-  'api/fetchActivities',
-  async (location: string, { dispatch }) => {
-    const res = await fetch(`/api/attractions?location=${location}`);
-    const data = await res.json();
-    dispatch(setTouristSpots(data.result || data.attractions || data));
-    return data;
-  }
-);
+// export const fetchActivities = createAsyncThunk(
+//   'api/fetchActivities',
+//   async (location: string, { dispatch }) => {
+//     // Disabled: No API key
+//     // const res = await fetch(`/api/attractions?location=${location}`);
+//     // const data = await res.json();
+//     // dispatch(setTouristSpots(data.result || data.attractions || data));
+//     // return data;
+//     return null;
+//   }
+// );
 
 export const fetchRecommendations = createAsyncThunk(
   'api/fetchRecommendations',
@@ -70,32 +76,38 @@ export const fetchRecommendations = createAsyncThunk(
   }
 );
 
-export const fetchWeather = createAsyncThunk(
-  'api/fetchWeather',
-  async (city: string, { dispatch }) => {
-    const res = await fetch(`/api/weather?city=${city}`);
-    const data = await res.json();
-    dispatch(setWeather(data));
-    return data;
-  }
-);
+// export const fetchWeather = createAsyncThunk(
+//   'api/fetchWeather',
+//   async (city: string, { dispatch }) => {
+//     // Disabled: No API key
+//     // const res = await fetch(`/api/weather?city=${city}`);
+//     // const data = await res.json();
+//     // dispatch(setWeather(data));
+//     // return data;
+//     return null;
+//   }
+// );
 
-export const fetchCurrency = createAsyncThunk(
-  'api/fetchCurrency',
-  async ({ base, symbols }: { base: string; symbols: string }, { dispatch }) => {
-    const res = await fetch(`/api/currency?base=${base}&symbols=${symbols}`);
-    const data = await res.json();
-    dispatch(setCurrency(data));
-    return data;
-  }
-);
+// export const fetchCurrency = createAsyncThunk(
+//   'api/fetchCurrency',
+//   async ({ base, symbols }: { base: string; symbols: string }, { dispatch }) => {
+//     // Disabled: No API key
+//     // const res = await fetch(`/api/currency?base=${base}&symbols=${symbols}`);
+//     // const data = await res.json();
+//     // dispatch(setCurrency(data));
+//     // return data;
+//     return null;
+//   }
+// );
 
-export const fetchEvents = createAsyncThunk(
-  'api/fetchEvents',
-  async (city: string, { dispatch }) => {
-    const res = await fetch(`/api/events?city=${city}`);
-    const data = await res.json();
-    dispatch(setEvents(data.events || data.result || data));
-    return data;
-  }
-);
+// export const fetchEvents = createAsyncThunk(
+//   'api/fetchEvents',
+//   async (city: string, { dispatch }) => {
+//     // Disabled: No API key
+//     // const res = await fetch(`/api/events?city=${city}`);
+//     // const data = await res.json();
+//     // dispatch(setEvents(data.events || data.result || data));
+//     // return data;
+//     return null;
+//   }
+// );

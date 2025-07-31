@@ -9,7 +9,7 @@ import FlightResults from '../components/FlightResults';
 import ActivityResults from '../components/ActivityResults';
 import UtilityInfo from '../components/UtilityInfo';
 import { RootState } from '../redux/store';
-import { fetchHotels, fetchFlights, fetchActivities, fetchWeather, fetchCurrency, fetchEvents, fetchRecommendations } from '../redux/slices/apiThunks';
+import { fetchRecommendations } from '../redux/slices/apiThunks';
 import styles from '../styles/modern.module.css';
 
 const HomePage = () => {
@@ -21,12 +21,6 @@ const HomePage = () => {
 
     useEffect(() => {
         if (source && destination) {
-            dispatch(fetchHotels({ location: destination, checkin: '2025-08-01', checkout: '2025-08-05', guests: 1 }) as any);
-            dispatch(fetchFlights({ origin: source, destination, date: '2025-08-01' }) as any);
-            dispatch(fetchActivities(destination) as any);
-            dispatch(fetchWeather(destination) as any);
-            dispatch(fetchCurrency({ base: 'USD', symbols: 'INR,EUR' }) as any);
-            dispatch(fetchEvents(destination) as any);
             dispatch(fetchRecommendations() as any);
         }
     }, [source, destination, dispatch]);
@@ -38,8 +32,7 @@ const HomePage = () => {
                 <SearchForm />
             </div>
             <div className={styles['map-section']}>
-                {/* Example: Center map on destination, fallback to 0,0 */}
-                <MapDisplay lat={0} lng={0} />
+                <MapDisplay source={source} destination={destination} />
             </div>
             <div className={styles['results-section']}>
                 <HotelResults hotels={results.hotels || []} />
