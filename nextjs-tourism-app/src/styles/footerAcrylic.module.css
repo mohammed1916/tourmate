@@ -10,7 +10,6 @@
   backdrop-filter: blur(12px) saturate(180%);
   border-top: 1px solid rgba(255,255,255,0.15);
   box-shadow: 0 4px 32px 0 rgba(0,0,0,0.12);
-  border-radius: 0 0 16px 16px;
   letter-spacing: 0.02em;
   margin-top: 2rem;
 }
