@@ -48,8 +48,7 @@ const SearchForm: React.FC = () => {
                     <input
                       type="text"
                       id="source"
-                      value={source}
-                      onChange={e => setSource(e.target.value)}
+                      placeholder="Enter source location"
                       required
                     />
                   </Autocomplete>
@@ -73,8 +72,7 @@ const SearchForm: React.FC = () => {
                     <input
                       type="text"
                       id="destination"
-                      value={destination}
-                      onChange={e => setDestination(e.target.value)}
+                      placeholder="Enter destination"
                       required
                     />
                   </Autocomplete>
