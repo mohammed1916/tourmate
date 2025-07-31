@@ -1,3 +1,13 @@
+html, body, #__next {
+  background: #18181b !important;
+  color: #f3f4f6;
+}
+
+body {
+  background: #18181b;
+  color: #f3f4f6;
+}
+
 input, select, button {
   font-size: 1rem;
   padding: 0.5rem 1rem;
@@ -5,6 +15,9 @@ input, select, button {
   border: 1px solid #cbd5e1;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
+  background: #23232a;
+  color: #f3f4f6;
+  border: 1px solid #333;
 }
 button {
   background: #2563eb;
@@ -17,9 +30,19 @@ button {
 button:hover {
   background: #1d4ed8;
 }
+input:focus, select:focus, button:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
 label {
   font-weight: 500;
   color: #334155;
+}
+label {
+  color: #d1d5db;
+}
+h1, h2, h3 {
+  color: #a5b4fc;
 }
 h2, h3 {
   color: #2563eb;
@@ -28,4 +51,13 @@ h2, h3 {
 ul {
   list-style: none;
   padding: 0;
+}
+.result-card, .recommendations-section, .main-container {
+  background: #23232a;
+  color: #f3f4f6;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+footer, .acrylicFooter {
+  background: rgba(30, 30, 40, 0.85);
+  color: #f3f4f6;
 }
