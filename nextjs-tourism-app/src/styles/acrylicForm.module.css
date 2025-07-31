@@ -13,6 +13,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  z-index: 9999;
 }
 
 .acrylicForm::before {
@@ -22,7 +23,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 0;
+  z-index: -1;
   opacity: 0.25;
   background-size: 200% 200%;
   animation: acrylicMove 6s ease-in-out infinite;
@@ -36,7 +37,6 @@
 
 .acrylicForm > * {
   position: static;
-  z-index: auto;
 }
 
 .acrylicForm label {
@@ -98,6 +98,7 @@
 
 .autocompleteContainer {
   position: relative;
+  pointer-events: auto;
 }
 
 .autocompleteSource {

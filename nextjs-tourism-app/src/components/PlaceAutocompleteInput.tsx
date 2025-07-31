@@ -12,6 +12,7 @@ interface PlaceAutocompleteInputProps {
 const PlaceAutocompleteInput: React.FC<PlaceAutocompleteInputProps> = ({ value, onChange, placeholder, id, zIndex }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const pacRef = useRef<any>(null);
+  const lastValueRef = useRef<string>('');
 
   useEffect(() => {
     if (!window.google?.maps?.places?.PlaceAutocompleteElement || !containerRef.current) return;
@@ -32,13 +33,22 @@ const PlaceAutocompleteInput: React.FC<PlaceAutocompleteInputProps> = ({ value, 
         input.placeholder = placeholder;
         input.id = id;
         input.autofocus = true;
+        input.value = value || '';
         input.focus();
+        // Listen for manual input
+        input.addEventListener('input', (e: any) => {
+          lastValueRef.current = e.target.value;
+          onChange(e.target.value);
+        });
       }
     }, 0);
 
     pac.addEventListener('gmp-placeautocomplete-placechange', (event: any) => {
       const place = event.target.value;
-      onChange(place?.structured_formatting?.main_text || place?.description || '');
+      const input = pac.shadowRoot?.querySelector('input');
+      let val = place?.structured_formatting?.main_text || place?.description || input?.value || '';
+      lastValueRef.current = val;
+      onChange(val);
     });
 
     // Clean up

@@ -26,6 +26,9 @@ const SearchForm: React.FC = () => {
         e.preventDefault();
         dispatch(setSearchParams({ source, destination }));
         localStorage.setItem('llm_provider', provider);
+        // Debug: log values to ensure they are valid
+        console.log('Submitted source:', source);
+        console.log('Submitted destination:', destination);
     };
 
     return (
