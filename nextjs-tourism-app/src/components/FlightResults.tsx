@@ -11,15 +11,21 @@ export interface Flight {
 const FlightResults: React.FC<{ flights: Flight[] }> = ({ flights }) => (
   <div>
     <h2>Flights</h2>
-    <ul>
-      {flights.map(flight => (
-        <li key={flight.id}>
-          <strong>{flight.airline}</strong> <br />
-          {flight.departure} → {flight.arrival} <br />
-          {flight.price && <span>Price: {flight.price}</span>}
-        </li>
-      ))}
-    </ul>
+    {flights && flights.length > 0 ? (
+      <div>
+        <ul>
+          {flights.map(flight => (
+            <li key={flight.id}>
+              <strong>{flight.airline}</strong> <br />
+              {flight.departure} → {flight.arrival} <br />
+              {flight.price && <span>Price: {flight.price}</span>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : (
+      <p>No flights available.</p>
+    )}
   </div>
 );
 
