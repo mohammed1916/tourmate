@@ -17,6 +17,7 @@ const SearchForm: React.FC = () => {
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
     const [provider, setProvider] = useState('ollama');
+    const [loading, setLoading] = useState(false);
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
         libraries: libraries
@@ -37,6 +38,7 @@ const SearchForm: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
         let latestSource = source;
         let latestDestination = destination;
         if (sourceRef.current) latestSource = sourceRef.current.getInputValue();
@@ -44,10 +46,17 @@ const SearchForm: React.FC = () => {
         console.log('State at submit (ref):', { latestSource, latestDestination });
         dispatch(setSearchParams({ source: latestSource, destination: latestDestination }));
         localStorage.setItem('llm_provider', provider);
+        // Simulate search delay for animation demo
+        setTimeout(() => setLoading(false), 2000);
     };
 
     return (
-        <form onSubmit={handleSubmit} className={styles.acrylicForm}>
+        <>
+        <form
+          onSubmit={handleSubmit}
+          className={styles.acrylicForm + (loading ? ' ' + styles.formSlideLeft : '')}
+          style={loading ? { pointerEvents: 'none', opacity: 0.5 } : {}}
+        >
             <div>
                 <label htmlFor="source">Source:</label>
                 {isLoaded ? (
@@ -106,6 +115,26 @@ const SearchForm: React.FC = () => {
             </div>
             <button type="submit">Search</button>
         </form>
+        {loading && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.searchingModal}>
+                <center>
+              <span>Searching for <br></br>
+              <b>{source}</b> 
+              <br></br>
+              to 
+              <br></br>
+              <b>{destination}</b> 
+              </span>
+              <br></br>
+              <span className={styles.dots}>
+                <span>.</span><span>.</span><span>.</span>
+              </span>
+              </center>
+            </div>
+          </div>
+        )}
+        </>
     );
 };
 
