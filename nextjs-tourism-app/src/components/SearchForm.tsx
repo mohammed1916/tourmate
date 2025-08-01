@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { setSearchParams } from '../redux/slices/searchSlice';
-import PlaceAutocompleteInput from './PlaceAutocompleteInput';
+import PlaceAutocompleteInput, { PlaceAutocompleteInputHandle } from './PlaceAutocompleteInput';
 import { useJsApiLoader } from '@react-google-maps/api';
 import styles from '../styles/acrylicForm.module.css';
 
@@ -16,19 +16,34 @@ const SearchForm: React.FC = () => {
     const dispatch = useDispatch();
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
-    const [provider, setProvider] = useState('gemini');
+    const [provider, setProvider] = useState('ollama');
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
         libraries: libraries
     });
+    const sourceRef = useRef<PlaceAutocompleteInputHandle>(null);
+    const destRef = useRef<PlaceAutocompleteInputHandle>(null);
+
+    useEffect(() => {
+        // Debug: log value changes
+        console.log('Source state changed:', source);
+        console.log('Destination state changed:', destination);
+    }, [source, destination]);
+
+    const handleSetSource = (val: string) => {
+        console.log('handleSetSource called with:', val);
+        setSource(val);
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(setSearchParams({ source, destination }));
+        let latestSource = source;
+        let latestDestination = destination;
+        if (sourceRef.current) latestSource = sourceRef.current.getInputValue();
+        if (destRef.current) latestDestination = destRef.current.getInputValue();
+        console.log('State at submit (ref):', { latestSource, latestDestination });
+        dispatch(setSearchParams({ source: latestSource, destination: latestDestination }));
         localStorage.setItem('llm_provider', provider);
-        // Debug: log values to ensure they are valid
-        console.log('Submitted source:', source);
-        console.log('Submitted destination:', destination);
     };
 
     return (
@@ -37,18 +52,18 @@ const SearchForm: React.FC = () => {
                 <label htmlFor="source">Source:</label>
                 {isLoaded ? (
                   <PlaceAutocompleteInput
+                    ref={sourceRef}
                     value={source}
-                    onChange={setSource}
+                    onChange={handleSetSource}
                     placeholder="Enter source location"
                     id="source"
-                    zIndex={11000}
                   />
                 ) : (
                   <input
                     type="text"
                     id="source"
                     value={source}
-                    onChange={e => setSource(e.target.value)}
+                    onChange={e => handleSetSource(e.target.value)}
                     required
                   />
                 )}
@@ -57,11 +72,11 @@ const SearchForm: React.FC = () => {
                 <label htmlFor="destination">Destination:</label>
                 {isLoaded ? (
                   <PlaceAutocompleteInput
+                    ref={destRef}
                     value={destination}
                     onChange={setDestination}
                     placeholder="Enter destination"
                     id="destination"
-                    zIndex={10000}
                   />
                 ) : (
                   <input
@@ -78,7 +93,10 @@ const SearchForm: React.FC = () => {
                 <select
                     id="provider"
                     value={provider}
-                    onChange={e => setProvider(e.target.value)}
+                    onChange={e => {
+                        setProvider(e.target.value);
+                        localStorage.setItem('llm_provider', e.target.value);
+                    }}
                     className={styles.providerSelect}
                 >
                     {PROVIDERS.map(opt => (

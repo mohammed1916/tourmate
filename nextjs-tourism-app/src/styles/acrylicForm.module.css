@@ -13,7 +13,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  z-index: 9999;
+  /* z-index: 9999; */
 }
 
 .acrylicForm::before {
@@ -23,7 +23,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: -1;
+  /* z-index: -1; */
   opacity: 0.25;
   background-size: 200% 200%;
   animation: acrylicMove 6s ease-in-out infinite;
@@ -102,11 +102,20 @@
 }
 
 .autocompleteSource {
-  z-index: 11000 !important;
+  /* z-index: 11000 !important; */
 }
 
 .autocompleteDestination {
-  z-index: 10000 !important;
+  /* z-index: 10000 !important; */
+}
+
+/* Ensure Google Maps Autocomplete dropdown is always visible above form */
+.pac-container {
+  /* z-index: 20000 !important; */
+  position: absolute !important;
+  opacity: 1 !important;
+  background: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
 }
 
 @media (max-width: 600px) {
