@@ -9,10 +9,12 @@ const containerStyle = {
   margin: '1rem 0',
 };
 
+const libraries: Array<'places' | 'geometry' | 'drawing' | 'visualization'> = ['places'];
+
 const MapDisplay: React.FC<{ source?: string; destination?: string }> = ({ source, destination }) => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-    libraries: ['places']
+    libraries
   });
   const [directions, setDirections] = useState<any>(null);
 

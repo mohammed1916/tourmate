@@ -1,7 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { setSearchParams } from '../redux/slices/searchSlice';
-import { Autocomplete, useJsApiLoader } from '@react-google-maps/api';
+import PlaceAutocompleteInput, { PlaceAutocompleteInputHandle } from './PlaceAutocompleteInput';
+import { useJsApiLoader } from '@react-google-maps/api';
+import styles from '../styles/acrylicForm.module.css';
 
 const PROVIDERS = [
   { value: 'gemini', label: 'Google Gemini API' },
@@ -14,49 +16,63 @@ const SearchForm: React.FC = () => {
     const dispatch = useDispatch();
     const [source, setSource] = useState('');
     const [destination, setDestination] = useState('');
-    const [provider, setProvider] = useState('gemini');
-    const sourceRef = useRef<google.maps.places.Autocomplete | null>(null);
-    const destRef = useRef<google.maps.places.Autocomplete | null>(null);
+    const [provider, setProvider] = useState('ollama');
+    const [loading, setLoading] = useState(false);
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
         libraries: libraries
     });
+    const sourceRef = useRef<PlaceAutocompleteInputHandle>(null);
+    const destRef = useRef<PlaceAutocompleteInputHandle>(null);
 
-    const handleSourceLoad = (autocomplete: google.maps.places.Autocomplete) => {
-        sourceRef.current = autocomplete;
-    };
-    const handleDestLoad = (autocomplete: google.maps.places.Autocomplete) => {
-        destRef.current = autocomplete;
+    useEffect(() => {
+        // Debug: log value changes
+        console.log('Source state changed:', source);
+        console.log('Destination state changed:', destination);
+    }, [source, destination]);
+
+    const handleSetSource = (val: string) => {
+        console.log('handleSetSource called with:', val);
+        setSource(val);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        dispatch(setSearchParams({ source, destination }));
+        setLoading(true);
+        let latestSource = source;
+        let latestDestination = destination;
+        if (sourceRef.current) latestSource = sourceRef.current.getInputValue();
+        if (destRef.current) latestDestination = destRef.current.getInputValue();
+        console.log('State at submit (ref):', { latestSource, latestDestination });
+        dispatch(setSearchParams({ source: latestSource, destination: latestDestination }));
         localStorage.setItem('llm_provider', provider);
+        // Simulate search delay for animation demo
+        setTimeout(() => setLoading(false), 2000);
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <>
+        <form
+          onSubmit={handleSubmit}
+          className={styles.acrylicForm + (loading ? ' ' + styles.formSlideLeft : '')}
+          style={loading ? { pointerEvents: 'none', opacity: 0.5 } : {}}
+        >
             <div>
                 <label htmlFor="source">Source:</label>
                 {isLoaded ? (
-                  <Autocomplete onLoad={handleSourceLoad} onPlaceChanged={() => {
-                    const place = sourceRef.current?.getPlace();
-                    setSource(place?.formatted_address || '');
-                  }}>
-                    <input
-                      type="text"
-                      id="source"
-                      placeholder="Enter source location"
-                      required
-                    />
-                  </Autocomplete>
+                  <PlaceAutocompleteInput
+                    ref={sourceRef}
+                    value={source}
+                    onChange={handleSetSource}
+                    placeholder="Enter source location"
+                    id="source"
+                  />
                 ) : (
                   <input
                     type="text"
                     id="source"
                     value={source}
-                    onChange={e => setSource(e.target.value)}
+                    onChange={e => handleSetSource(e.target.value)}
                     required
                   />
                 )}
@@ -64,17 +80,13 @@ const SearchForm: React.FC = () => {
             <div>
                 <label htmlFor="destination">Destination:</label>
                 {isLoaded ? (
-                  <Autocomplete onLoad={handleDestLoad} onPlaceChanged={() => {
-                    const place = destRef.current?.getPlace();
-                    setDestination(place?.formatted_address || '');
-                  }}>
-                    <input
-                      type="text"
-                      id="destination"
-                      placeholder="Enter destination"
-                      required
-                    />
-                  </Autocomplete>
+                  <PlaceAutocompleteInput
+                    ref={destRef}
+                    value={destination}
+                    onChange={setDestination}
+                    placeholder="Enter destination"
+                    id="destination"
+                  />
                 ) : (
                   <input
                     type="text"
@@ -85,12 +97,16 @@ const SearchForm: React.FC = () => {
                   />
                 )}
             </div>
-            <div>
-                <label htmlFor="provider">LLM Provider:</label>
+            <div className={styles.providerSection}>
+                <label htmlFor="provider" className={styles.providerLabel}>LLM Provider:</label>
                 <select
                     id="provider"
                     value={provider}
-                    onChange={e => setProvider(e.target.value)}
+                    onChange={e => {
+                        setProvider(e.target.value);
+                        localStorage.setItem('llm_provider', e.target.value);
+                    }}
+                    className={styles.providerSelect}
                 >
                     {PROVIDERS.map(opt => (
                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -99,6 +115,26 @@ const SearchForm: React.FC = () => {
             </div>
             <button type="submit">Search</button>
         </form>
+        {loading && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.searchingModal}>
+                <center>
+              <span>Searching for <br></br>
+              <b>{source}</b> 
+              <br></br>
+              to 
+              <br></br>
+              <b>{destination}</b> 
+              </span>
+              <br></br>
+              <span className={styles.dots}>
+                <span>.</span><span>.</span><span>.</span>
+              </span>
+              </center>
+            </div>
+          </div>
+        )}
+        </>
     );
 };
 
